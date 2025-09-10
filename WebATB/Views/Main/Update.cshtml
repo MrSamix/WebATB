@@ -1,0 +1,81 @@
+﻿@model CategoryUpdateModel
+
+<h1 class="text-center">Оновити категорію</h1>
+
+<form asp-action="Update"
+      class="col-md-6 offset-md-3"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control">
+        @* <input type="text"  class="form-control" id="Name" name="Name"> *@
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="mb-3">
+                <img src="@Model.Image" id="image" alt="" width="120" />
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="mb-3">
+                <label asp-for="ImageFile" class="form-label"></label>
+                <input asp-for="ImageFile" class="form-control" accept="image/*">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" id="descriptionArea"></textarea>
+        </div>
+    </div>
+
+
+
+    <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+          const imageInput = document.getElementById('ImageFile');
+          imageInput.addEventListener('change', function(event) {
+              const file = event.target.files[0];
+              if (!file) {
+                  return;
+              }
+              document.getElementById("image").src = URL.createObjectURL(file);
+         });
+
+        });
+
+
+
+
+        tinymce.init({
+        selector: '#descriptionArea',
+        license_key: 'gpl', // gpl for open source, T8LK:... for commercial
+        plugins: [
+          // Core editing features
+          'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+          // Your account includes a free trial of TinyMCE premium features
+          // Try the most popular premium features until Sep 22, 2025:
+          'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+        ],
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        tinycomments_mode: 'embedded',
+        tinycomments_author: 'Author name',
+        mergetags_list: [
+          { value: 'First.Name', title: 'First Name' },
+          { value: 'Email', title: 'Email' },
+        ],
+        ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+        uploadcare_public_key: '80ba5d5ace1a940e2ba6',
+      });
+    </script>
+
+
+}

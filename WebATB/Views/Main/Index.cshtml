@@ -1,0 +1,40 @@
+﻿@model List<CategoryItemModel>
+@{
+}
+
+<h1 class="text-center">WebATB - смакота</h1>
+
+<a href="@Url.Action("Create")" class="btn btn-success">Додати</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Image</th>
+            <th scope="col">Name</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <th scope="row">
+                    @item.Id
+                </th>
+                <td>
+                    <img src="@item.Image" alt="" width="75" />
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-success">Змінити</a>
+                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger">Видалити</a>
+                </td>
+            </tr>
+        }
+        
+    </tbody>
+</table>
+

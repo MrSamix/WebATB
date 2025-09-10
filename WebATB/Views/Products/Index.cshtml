@@ -1,0 +1,66 @@
+﻿@model List<ProductItemModel>
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<h1 class="text-center mt-4">Продукти</h1>
+
+<a href="@Url.Action("Create")" class="btn btn-success">Додати</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Image</th>
+            <th scope="col">Name</th>
+            <th scope="col">Назва категорії</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            if (item.IsDeleted)
+            {
+                continue;
+            }
+            <tr>
+                <th scope="row">
+                    @item.Id
+                </th>
+                <td>
+                    @foreach (var img in item.ProductImages)
+                    {
+                        <img src="@img" alt="" width="75" />
+                    }
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.CategoryName
+                </td>
+                <td>
+                    <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-success">Змінити</a>
+                    <btn onclick="deleteAlert(@item.Id)" class="btn btn-danger">Видалити</btn>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+
+@section Scripts
+{
+    <script>
+            const deleteAlert = (id) => {
+                if (confirm("Ви впевнені що хочете видалити цей продукт?")) {
+                    window.location.href = `/Products/Delete/${id}`;
+                }
+            }
+    </script>
+}
