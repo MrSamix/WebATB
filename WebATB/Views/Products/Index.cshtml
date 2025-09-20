@@ -23,6 +23,7 @@
     <tbody>
         @foreach (var item in Model)
         {
+            var modalId = $"confirmDeleteModal_{item.Id}";
             if (item.IsDeleted)
             {
                 continue;
@@ -45,22 +46,44 @@
                 </td>
                 <td>
                     <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-success">Змінити</a>
-                    <btn onclick="deleteAlert(@item.Id)" class="btn btn-danger">Видалити</btn>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#@modalId">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    @* <btn onclick="deleteAlert(@item.Id)" class="btn btn-danger">Видалити</btn> *@
                 </td>
             </tr>
+            <div class="modal fade" id="@modalId" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Ви дійсно хочете видалити?</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Ви хочете видалити <strong>@item.Name?</strong>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                            <form asp-action="Delete" asp-route-id="@item.Id">
+                                <button type="submit" class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Видалити</button>
+                            </form>
+                            @* <button type="button" class="btn btn-danger">Видалити</button> *@
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
-
     </tbody>
 </table>
 
 
-@section Scripts
-{
-    <script>
-            const deleteAlert = (id) => {
-                if (confirm("Ви впевнені що хочете видалити цей продукт?")) {
-                    window.location.href = `/Products/Delete/${id}`;
-                }
-            }
-    </script>
-}
+@* @section Scripts *@
+@* { *@
+@*     <script> *@
+@*             const deleteAlert = (id) => { *@
+@*                 if (confirm("Ви впевнені що хочете видалити цей продукт?")) { *@
+@*                     window.location.href = `/Products/Delete/${id}`; *@
+@*                 } *@
+@*             } *@
+@*     </script> *@
+@* } *@

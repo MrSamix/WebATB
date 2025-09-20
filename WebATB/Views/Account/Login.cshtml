@@ -1,0 +1,22 @@
+﻿@model WebATB.Models.Account.LoginViewModel
+
+<h2 class="text-center mt-3">Вхід</h2>
+<form method="post" asp-controller="Account" asp-action="Login" class="col-md-6 offset-md-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="UsernameOrEmail" class="form-label"></label>
+        <input asp-for="UsernameOrEmail" type="text" class="form-control" aria-describedby="emailHelp">
+        <span asp-validation-for="UsernameOrEmail" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" type="password" class="form-control">
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="mb-3 form-check">
+        <input asp-for="RememberMe" class="form-check-input">
+        <label asp-for="RememberMe" class="form-check-label"></label>
+    </div>
+    <button type="submit" class="btn btn-primary">Увійти</button>
+    <a asp-action="Register" class="btn btn-success">Створити аккаунт</a>
+</form>

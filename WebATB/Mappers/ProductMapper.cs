@@ -20,7 +20,7 @@ public class ProductMapper : Profile
             .ForMember(x => x.Images,
             opt => opt.MapFrom(x => x.ProductsImages!
             .OrderBy(x => x.Priority)
-            .Select(pi => $"/images/200_{pi.Path}").ToList()))
+            .Select(pi => $"/images/1200_{pi.Path}").ToList()))
             .ForMember(opt => opt.CategoryId, prop => prop.MapFrom(x => x.Category.Id));
         CreateMap<ProductUpdateModel, ProductEntity>();
     }

@@ -55,6 +55,30 @@ public class ImageService(IConfiguration configuration) : IImageService
         return imageName;
     }
 
+    public async Task<string> SaveAvatarAsync(IFormFile file)
+    {
+        using MemoryStream ms = new();
+        await file.CopyToAsync(ms);
+        var bytes = ms.ToArray();
+
+        string imageName = Guid.NewGuid().ToString() + ".webp";
+        var sizes = configuration.GetRequiredSection("ImageSizes").Get<List<int>>();
+        if (sizes == null || sizes.Count == 0)
+        {
+            sizes = new List<int> { 256, 512, 1024 };
+        }
+
+        var avatarDir = configuration.GetValue<string>("AvatarDir") ?? "avatars";
+
+        Task[] tasks = sizes
+            .AsParallel()
+            .Select(s => SaveImageToDirAsync(bytes, imageName, s, avatarDir))
+            .ToArray();
+
+        await Task.WhenAll(tasks);
+        return imageName;
+    }
+
     private async Task<string> SaveImageAsync(byte[] bytes)
     {
         string imageName = Guid.NewGuid().ToString() + ".webp";
@@ -82,7 +106,25 @@ public class ImageService(IConfiguration configuration) : IImageService
     private async Task SaveImageAsync(Byte[] bytes, string name, int size)
     {
         var dirName = configuration.GetValue<string>("ImagesDir") ?? "images";
-        var path = Path.Combine(Directory.GetCurrentDirectory(), dirName, $"{size}_{name}");
+        var baseDir = Path.Combine(Directory.GetCurrentDirectory(), dirName);
+        Directory.CreateDirectory(baseDir);
+        var path = Path.Combine(baseDir, $"{size}_{name}");
+        using var image = Image.Load(bytes);
+        image.Mutate(imgContext => {
+            imgContext.Resize(new ResizeOptions
+            {
+                Size = new Size(size, size),
+                Mode = ResizeMode.Max
+            });
+        });
+        await image.SaveAsWebpAsync(path);
+    }
+
+    private async Task SaveImageToDirAsync(Byte[] bytes, string name, int size, string dirName)
+    {
+        var baseDir = Path.Combine(Directory.GetCurrentDirectory(), dirName);
+        Directory.CreateDirectory(baseDir);
+        var path = Path.Combine(baseDir, $"{size}_{name}");
         using var image = Image.Load(bytes);
         image.Mutate(imgContext => {
             imgContext.Resize(new ResizeOptions

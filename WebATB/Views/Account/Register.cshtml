@@ -1,0 +1,105 @@
+﻿@model WebATB.Models.Account.RegisterViewModel
+
+<h2 class="text-center mt-2">Реєстрація</h2>
+<form method="post" asp-controller="Account" asp-action="Register" class="col-md-6 offset-md-3" enctype="multipart/form-data">
+	<div class="mb-3">
+		<label asp-for="LastName" class="form-label"></label>
+		<input asp-for="LastName" type="text" class="form-control">
+		<span asp-validation-for="LastName" class="text-danger"></span>
+	</div>
+	<div class="mb-3">
+		<label asp-for="FirstName" class="form-label"></label>
+		<input asp-for="FirstName" type="text" class="form-control">
+		<span asp-validation-for="FirstName" class="text-danger"></span>
+	</div>
+	<div class="mb-3">
+		<label asp-for="UserName" class="form-label"></label>
+		<input asp-for="UserName" type="text" class="form-control">
+		<span asp-validation-for="UserName" class="text-danger"></span>
+	</div>
+	<div class="mb-3">
+		<label asp-for="Email" class="form-label"></label>
+		<input asp-for="Email" type="email" class="form-control">
+		<span asp-validation-for="Email" class="text-danger"></span>
+	</div>
+	<div class="mb-3">
+		<label asp-for="Password" class="form-label"></label>
+		<input asp-for="Password" type="password" class="form-control">
+		<span asp-validation-for="Password" class="text-danger"></span>
+	</div>
+	<div class="mb-3">
+		<label asp-for="PasswordConfirm" class="form-label"></label>
+		<input asp-for="PasswordConfirm" type="password" class="form-control">
+		<span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+	</div>
+	<div class="mb-3">
+		<label asp-for="Image" class="form-label"></label> <br />
+        <label for="Image">
+			<div class="profile-pic" id="imageInput" style="background-image: url(/no-image-icon.png)">
+				<i class="bi bi-camera"></i>
+				<span>Додати картинку</span>
+			</div>
+        </label>
+		<input type="file" asp-for="Image" accept="image/*">
+		<span asp-validation-for="Image" class="text-danger"></span>
+	</div>
+	<div class="mb-3">
+		<button type="submit" class="btn btn-primary">Зареєструватись</button>
+		<a asp-action="Login" class="btn btn-success">Увійти</a>
+	</div>
+</form>
+
+@section Scripts {
+	<script>
+		const previewDiv = document.getElementById('imageInput');
+		const filePicker = document.getElementById('Image');
+
+		filePicker.addEventListener('change', (event) => {
+			const file = event.target.files[0];
+			if (file) {
+				const reader = new FileReader();
+				reader.onload = (e) => {
+					previewDiv.style.backgroundImage = `url("${e.target.result}")`;
+				};
+				reader.readAsDataURL(file);
+			}
+		});
+	</script>
+}
+
+@section Styles {
+	<style>
+		.profile-pic {
+			border-radius: 50%;
+			height: 150px;
+			width: 150px;
+			background-size: cover;
+			background-position: center;
+			background-blend-mode: multiply;
+			vertical-align: middle;
+			text-align: center;
+			color: transparent;
+			transition: all .3s ease;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		.profile-pic:hover {
+			background-color: rgba(0,0,0,.5);
+			z-index: 10000;
+			color: #fff;
+			transition: all .3s ease;
+			text-decoration: none;
+		}
+
+		.profile-pic span {
+			display: inline-block;
+			padding-top: 60px;
+		}
+
+		form input[type="file"] {
+			display: none;
+			cursor: pointer;
+		}
+	</style>
+}
