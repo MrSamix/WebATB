@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using System.Security.Claims;
@@ -13,11 +14,13 @@ namespace WebATB.Controllers
         private readonly UserManager<UserEntity> _userManager;
         private readonly SignInManager<UserEntity> _signInManager;
         IImageService service;
-        public AccountController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, IImageService service)
+        IMapper mapper;
+        public AccountController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, IImageService service, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             this.service = service;
+            this.mapper = mapper;
         }
         public IActionResult Index()
         {
@@ -67,23 +70,25 @@ namespace WebATB.Controllers
         {
             if (ModelState.IsValid)
             {
-                var imageStr = model.Image is not null ? await service.SaveAvatarAsync(model.Image) : null;
-                UserEntity user = new UserEntity
-                {
-                    Email = model.Email,
-                    NormalizedEmail = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Image = imageStr,
-                    UserName = model.UserName
-                };
+                var imageStr = model.Image is not null ? await service.SaveImageAsync(model.Image, "AvatarDir") : null;
+                //UserEntity user = new UserEntity
+                //{
+                //    Email = model.Email,
+                //    NormalizedEmail = model.Email,
+                //    FirstName = model.FirstName,
+                //    LastName = model.LastName,
+                //    Image = imageStr,
+                //    UserName = model.UserName
+                //};
+                var user = mapper.Map<UserEntity>(model);
+                user.Image = imageStr;
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    if (imageStr is not null)
-                    {
-                        await _userManager.AddClaimAsync(user, new Claim("avatar", $"/avatars/50_{imageStr}"));
-                    }
+                    //if (imageStr is not null)
+                    //{
+                    //    await _userManager.AddClaimAsync(user, new Claim("avatar", $"/avatars/50_{imageStr}"));
+                    //}
 
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Main");

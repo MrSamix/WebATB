@@ -11,9 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//builder.Services.AddDbContext<AppATBDbContext>(options =>
-//    options.UseNpgsql(builder.Configuration.GetConnectionString("MyConnectionATB")));
-builder.Services.AddDbContext<AppATBDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionATB")));
+builder.Services.AddDbContext<AppATBDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSqlDb")));
+//builder.Services.AddDbContext<AppATBDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionATB")));
 
 builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 {
@@ -49,25 +48,25 @@ app.MapControllerRoute(
     pattern: "{controller=Main}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-// images
-var imagesDirName = builder.Configuration.GetValue<string>("ImagesDir") ?? "images";
-var imagesDir = Path.Combine(Directory.GetCurrentDirectory(), imagesDirName);
-Directory.CreateDirectory(imagesDir);
-app.UseStaticFiles(new StaticFileOptions
+Dictionary<string, string> imageSizes = new()
 {
-    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(imagesDir),
-    RequestPath = "/images"
-});
+    { "ImagesDir", "images" },
+    { "AvatarDir", "avatars" },
+};
 
-// avatars
-var avatarDirName = builder.Configuration.GetValue<string>("AvatarDir") ?? "avatars";
-var avatarDir = Path.Combine(Directory.GetCurrentDirectory(), avatarDirName);
-Directory.CreateDirectory(avatarDir);
-app.UseStaticFiles(new StaticFileOptions
+foreach (var (key, value) in imageSizes)
 {
-    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(avatarDir),
-    RequestPath = "/avatars"
-});
+    var dirName = builder.Configuration.GetValue<string>(key) ?? value;
+
+    var dir = Path.Combine(Directory.GetCurrentDirectory(), dirName);
+    Directory.CreateDirectory(dir);
+    //Дозволяємо доступ до файлів в папці images по шляху /images
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(dir),
+        RequestPath = $"/{value}"
+    });
+}
 
 await app.SeedDataAsync();
 

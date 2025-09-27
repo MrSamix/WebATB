@@ -2,6 +2,7 @@
 
 <h2 class="text-center mt-2">Реєстрація</h2>
 <form method="post" asp-controller="Account" asp-action="Register" class="col-md-6 offset-md-3" enctype="multipart/form-data">
+	<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 	<div class="mb-3">
 		<label asp-for="LastName" class="form-label"></label>
 		<input asp-for="LastName" type="text" class="form-control">
@@ -11,11 +12,6 @@
 		<label asp-for="FirstName" class="form-label"></label>
 		<input asp-for="FirstName" type="text" class="form-control">
 		<span asp-validation-for="FirstName" class="text-danger"></span>
-	</div>
-	<div class="mb-3">
-		<label asp-for="UserName" class="form-label"></label>
-		<input asp-for="UserName" type="text" class="form-control">
-		<span asp-validation-for="UserName" class="text-danger"></span>
 	</div>
 	<div class="mb-3">
 		<label asp-for="Email" class="form-label"></label>

@@ -5,7 +5,7 @@ namespace WebATB.Models.Account
     public class LoginViewModel
     {
         [Required(ErrorMessage = "Це поле обов'язкове!")]
-        [Display(Name = "Email або Ім'я користувача")]
+        [Display(Name = "Email")]
         public string UsernameOrEmail { get; set; }
 
         [Required(ErrorMessage = "Це поле обов'язкове!")]
