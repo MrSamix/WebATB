@@ -27,6 +27,11 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
     .AddEntityFrameworkStores<AppATBDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IImageService, ImageService>();
 
@@ -37,14 +42,28 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
+
+
 app.UseRouting();
 
 app.UseAuthorization();
 
 app.MapStaticAssets();
 
-app.MapControllerRoute(
+//app.MapControllerRoute(
+//    name: "MyArea",
+//    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
+//    .RequireAuthorization();
+
+app.MapAreaControllerRoute(
+    name: "MyAreaAdmin",
+    areaName: "Admin",
+    pattern: "Admin/{controller=Users}/{action=Index}/{id?}")
+    .RequireAuthorization("AdminOnly");
+
+app.MapAreaControllerRoute(
     name: "default",
+    areaName: "default",
     pattern: "{controller=Main}/{action=Index}/{id?}")
     .WithStaticAssets();
 

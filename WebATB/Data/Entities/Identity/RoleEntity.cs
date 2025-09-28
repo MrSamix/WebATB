@@ -7,7 +7,7 @@ namespace WebATB.Data.Entities.Identity
         public RoleEntity() { }
         public RoleEntity(string name)
         {
-            this.Name = name;
+            Name = name;
         }
         public ICollection<UserRoleEntity> UserRoles { get; set; } = null!;
     }

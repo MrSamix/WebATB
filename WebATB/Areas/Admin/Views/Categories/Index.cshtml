@@ -1,0 +1,34 @@
+﻿@model List<WebATB.Models.Category.CategoryItemModel>
+
+@section PageStyles {
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css" />
+}
+
+@section PageScripts {
+	<script src="https:////cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+	<script>
+		let table = new DataTable('#myTable');
+	</script>
+}
+
+<table id="myTable">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Image</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+    @foreach (var category in Model)
+	{
+		<tr>
+			<td>@category.Id</td>
+			<td>@category.Name</td>
+			<td>@category.Image</td>
+			<td>@category.Description</td>
+		</tr>
+	}
+</table>
+
+
