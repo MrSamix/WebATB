@@ -27,6 +27,13 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
     .AddEntityFrameworkStores<AppATBDbContext>()
     .AddDefaultTokenProviders();
 
+// Примусово перевіряємо cookie при кожному запиті, щоб зміни застосовувалися негайно
+builder.Services.Configure<SecurityStampValidatorOptions>(o =>
+{
+    o.ValidationInterval = TimeSpan.Zero;
+});
+
+// Адмінка - тільки для адміністраторів
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -43,17 +50,10 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapStaticAssets();
-
-//app.MapControllerRoute(
-//    name: "MyArea",
-//    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
-//    .RequireAuthorization();
 
 app.MapAreaControllerRoute(
     name: "MyAreaAdmin",
@@ -61,9 +61,8 @@ app.MapAreaControllerRoute(
     pattern: "Admin/{controller=Users}/{action=Index}/{id?}")
     .RequireAuthorization("AdminOnly");
 
-app.MapAreaControllerRoute(
+app.MapControllerRoute(
     name: "default",
-    areaName: "default",
     pattern: "{controller=Main}/{action=Index}/{id?}")
     .WithStaticAssets();
 
@@ -79,7 +78,8 @@ foreach (var (key, value) in imageSizes)
 
     var dir = Path.Combine(Directory.GetCurrentDirectory(), dirName);
     Directory.CreateDirectory(dir);
-    //Дозволяємо доступ до файлів в папці images по шляху /images
+
+    // Дозволяємо доступ до файлів в папці images по шляху /images
     app.UseStaticFiles(new StaticFileOptions
     {
         FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(dir),

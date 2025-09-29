@@ -11,29 +11,7 @@ namespace WebATB.Areas.Admin.Controllers;
 [Area("Admin")]
 public class UsersController(AppATBDbContext db, IMapper mapper, UserManager<UserEntity> userManager) : Controller
 {
-    //public async Task<IActionResult> Index()
-    //{
-    //    var users = await db.Users.AsNoTracking().ToListAsync();
 
-    //    // Fetch roles sequentially to avoid concurrent DbContext operations
-    //    var model = new List<UserItemVm>(users.Count);
-    //    foreach (var u in users)
-    //    {
-    //        var roles = await userManager.GetRolesAsync(u);
-    //        model.Add(new UserItemVm
-    //        {
-    //            Id = u.Id,
-    //            Email = u.Email,
-    //            UserName = u.UserName,
-    //            Roles = roles.ToList(),
-    //            Image = u.Image,
-    //            FirstName = u.FirstName,
-    //            LastName = u.LastName
-    //        });
-    //    }
-
-    //    return View(model);
-    //}
     public async Task<IActionResult> Index()
     {
         var users = await db.Users
@@ -42,24 +20,63 @@ public class UsersController(AppATBDbContext db, IMapper mapper, UserManager<Use
 
         return View(users);
     }
-    //public IActionResult Delete(int id)
-    //{
-    //    var user = db.Users.Find(id);
-    //    if (user != null)
-    //    {
-    //        db.Users.Remove(user);
-    //        db.SaveChanges();
-    //    }
-    //    return RedirectToAction("Index");
-    //}
-    public IActionResult Delete(int id)
+
+    public async Task<IActionResult> Ban(int id)
     {
-        var user = db.Users.Find(id);
+        var user = await userManager.FindByIdAsync(id.ToString());
         if (user != null)
         {
-            user.LockoutEnabled = true;
-            user.LockoutEnd = DateTime.UtcNow.AddYears(1000);
-            db.Users.Update(user);
+            await userManager.SetLockoutEnabledAsync(user, true);
+            await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+            // logout user
+            await userManager.UpdateSecurityStampAsync(user);
+        }
+        return RedirectToAction("Index");
+    }
+
+    public async Task<IActionResult> Unban(int id)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user != null)
+        {
+            await userManager.SetLockoutEndDateAsync(user, null);
+            // logout user
+            await userManager.UpdateSecurityStampAsync(user);
+        }
+        return RedirectToAction("Index");
+    }
+
+    public IActionResult SetAdmin(int id)
+    {
+        var user = db.Users.Include(p => p.UserRoles).FirstOrDefault(p => p.Id == id);
+        var role = db.Roles.FirstOrDefault(r => r.NormalizedName == "ADMIN");
+
+        if (user != null && role != null)
+        {
+            user.UserRoles.Clear();
+            user.UserRoles.Add(new UserRoleEntity
+            {
+                RoleId = role.Id,
+                UserId = user.Id
+            });
+            db.SaveChanges();
+        }
+        return RedirectToAction("Index");
+    }
+
+    public IActionResult SetUser(int id)
+    {
+        var user = db.Users.Include(p => p.UserRoles).FirstOrDefault(p => p.Id == id);
+        var role = db.Roles.FirstOrDefault(r => r.NormalizedName == "USER");
+
+        if (user != null && role != null)
+        {
+            user.UserRoles.Clear();
+            user.UserRoles.Add(new UserRoleEntity
+            {
+                RoleId = role.Id,
+                UserId = user.Id
+            });
             db.SaveChanges();
         }
         return RedirectToAction("Index");
