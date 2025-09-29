@@ -1,0 +1,17 @@
+﻿using AutoMapper;
+using WebATB.Areas.Admin.Models;
+using WebATB.Data.Entities.Identity;
+
+namespace WebATB.Areas.Admin.Mappers
+{
+    public class UserMapper : Profile
+    {
+        public UserMapper()
+        {
+            CreateMap<UserEntity, UserItemVm>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+                .ForMember(x => x.Image, opt => opt.MapFrom(x => string.IsNullOrEmpty(x.Image) ? $"/images/noimage.png" : $"/avatars/200_{x.Image}"))
+                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles!.Select(ur => ur.Role.Name).ToList()));
+        }
+    }
+}

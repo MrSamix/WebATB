@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebATB.Data.Entities;
 using WebATB.Data.Entities.Identity;
 
 namespace WebATB.Data;
 
-public class AppATBDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
+public class AppATBDbContext : IdentityDbContext<UserEntity, RoleEntity, int, IdentityUserClaim<int>, UserRoleEntity, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
 {
     public AppATBDbContext(DbContextOptions<AppATBDbContext> options)
         : base(options)

@@ -1,82 +1,88 @@
-@model List<UserListItemVm>
+@model List<UserItemVm>
 @{
-  ViewData["Title"] = "Dashboard - Analytics";
+    ViewData["Title"] = "Dashboard - Analytics";
 }
 
 @* @section VendorStyles {
-<link rel="stylesheet" href="~/vendor/libs/apex-charts/apex-charts.css" />
+<link rel="stylesheet" href="~/admin/vendor/libs/apex-charts/apex-charts.css" />
 } *@
 
 @* @section VendorScripts {
-<script src="~/vendor/libs/apex-charts/apexcharts.js"></script>
+<script src="~/admin/vendor/libs/apex-charts/apexcharts.js"></script>
 } *@
 
 @section PageScripts {
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var deleteModal = document.getElementById('deleteModal');
-    if (!deleteModal) return;
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        var deleteModal = document.getElementById('deleteModal');
+        if (!deleteModal) return;
 
-    deleteModal.addEventListener('show.bs.modal', function (event) {
-      var trigger = event.relatedTarget;
-      var userId = trigger ? trigger.getAttribute('data-id') : null;
-      var confirmBtn = deleteModal.querySelector('#confirmDeleteBtn');
-      if (!confirmBtn) return;
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+        var trigger = event.relatedTarget;
+        var userId = trigger ? trigger.getAttribute('data-id') : null;
+        var confirmBtn = deleteModal.querySelector('#confirmDeleteBtn');
+        if (!confirmBtn) return;
 
-      var baseUrl = confirmBtn.getAttribute('data-base-url') || '';
-      if (userId && baseUrl) {
+        var baseUrl = confirmBtn.getAttribute('data-base-url') || '';
+        if (userId && baseUrl) {
         // ensure exactly one trailing slash before the id
         var href = baseUrl.replace(/\/?$/, '/') + encodeURIComponent(userId);
         confirmBtn.setAttribute('href', href);
-      }
-    });
-  });
-</script>
+        }
+        });
+        });
+    </script>
 }
 
 @* ************** Content ************** *@
 
-  <!-- Data Tables -->
-  <div class="col-12">
+<!-- Data Tables -->
+<div class="col-12">
     <div class="card overflow-hidden">
-      <div class="table-responsive">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th class="text-truncate">Id</th>
-              <th class="text-truncate">User</th>
-              <th class="text-truncate">Email</th>
-              <th class="text-truncate">Role</th>
-              <th class="text-truncate">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach (var user in Model)
-            {
-                <tr>
-                    <td>@user.Id</td>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            @if (!string.IsNullOrEmpty(user.Image))
-                            {
-                                <div class="avatar avatar-sm me-4">
-                                    <img src="@($"/avatars/200_{user.Image}")" alt="Avatar" class="rounded-circle">
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th class="text-truncate">Id</th>
+                        <th class="text-truncate">User</th>
+                        <th class="text-truncate">Email</th>
+                        <th class="text-truncate">Role</th>
+                        <th class="text-truncate">Status</th>
+                        <th class="text-truncate">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.Id</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(user.Image))
+                                    {
+                                        <div class="avatar avatar-sm me-4">
+                                            <img src="@user.Image" alt="Avatar" class="rounded-circle">
+                                        </div>
+                                    }
+                                    else{
+                                        <div class="avatar avatar-sm me-4">
+                                            <img src="@("/no-image-icon.png")" alt="Avatar" class="rounded-circle">
+                                        </div>
+                                    }
+                                    <div>
+                                        <h6 class="mb-0 text-truncate">@user.FullName</h6>
+                                        @* <small class="text-truncate">&#64;amiccoo</small> *@
+                                    </div>
                                 </div>
-                            }
-                            else{
-                                <div class="avatar avatar-sm me-4">
-                                    <img src="@("/no-image-icon.png")" alt="Avatar" class="rounded-circle">
-                                </div>
-                            }
-                            <div>
-                                <h6 class="mb-0 text-truncate">@user.FirstName @user.LastName</h6>
-                                @* <small class="text-truncate">&#64;amiccoo</small> *@
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        @user.Email
-                    </td>
+                            </td>
+                            <td>
+                                @user.Email
+                            </td>
+                            <td>
+                                @(
+                                    user.LockoutEnd != null ? "Banned" : "Active"
+                                )
+                            </td>
                     <td class="text-truncate">
                         @if (@user.Roles.FirstOrDefault() == "Admin")
                         {
@@ -93,8 +99,17 @@
                         }
                     </td>
                     <td>
-                        <a class="ri-delete-bin-line ri-22px text-danger me-2 cursor-pointer" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@user.Id"></a>
+                        <div class="dropdown">
+                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="javascript:void(0);"><i class="ri-pencil-line me-1"></i> Edit</a>
+                                <a asp-action="Delete" asp-route-id="@user.Id" class="dropdown-item"><i class="ri-delete-bin-6-line me-1"></i> Delete</a>
+                            </div>
+                        </div>
                     </td>
+                    @* <td> *@
+                    @*     <a class="ri-delete-bin-line ri-22px text-danger me-2 cursor-pointer" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@user.Id"></a> *@
+                    @* </td> *@
                 </tr>
             }
             @* Example *@
@@ -103,7 +118,7 @@
               <td>
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm me-4">
-                    <img src="~/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+                    <img src="~/admin/img/avatars/1.png" alt="Avatar" class="rounded-circle">
                   </div>
                   <div>
                     <h6 class="mb-0 text-truncate">Jordan Stevenson</h6>

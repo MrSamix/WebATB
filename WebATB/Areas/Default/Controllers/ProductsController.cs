@@ -11,10 +11,10 @@ using WebATB.Models.Product;
 
 namespace WebATB.Controllers;
 
+[Area("Default")]
 public class ProductsController(AppATBDbContext dbContext,
     IMapper mapper, IImageService imageService) : Controller
 {
-    [Area("Default")]
     public IActionResult Index()
     {
         var model = dbContext.Products
