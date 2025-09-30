@@ -13,5 +13,8 @@ namespace WebATB.Data.Entities.Identity
         public string? Image { get; set; } = null;
 
         public ICollection<UserRoleEntity> UserRoles { get; set; }
+
+
+        public ICollection<IdentityUserLogin<int>> Logins { get; set; } = new List<IdentityUserLogin<int>>();
     }
 }

@@ -2,6 +2,23 @@
 
 @section PageStyles {
 	<link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css" />
+	<style>
+		#myTable td.desc-cell .desc-content {
+			max-height: 130px;
+			overflow-y: auto;
+			overflow-x: auto;
+			display: block;
+		}
+
+		#myTable td.desc-cell .desc-content img {
+			max-width: 100%;
+			height: auto;
+		}
+
+		#myTable td.desc-cell .desc-content p {
+			margin: 0;
+		}
+	</style>
 }
 
 @section PageScripts {
@@ -25,8 +42,12 @@
 		<tr>
 			<td>@category.Id</td>
 			<td>@category.Name</td>
-			<td>@category.Image</td>
-			<td>@category.Description</td>
+			<td><img src="@category.Image" width="100" class="rounded-3" alt="@category.Name" /></td>
+			<td class="desc-cell">
+				<div class="desc-content">
+					@Html.Raw(category.Description)
+				</div>
+			</td>
 		</tr>
 	}
 </table>

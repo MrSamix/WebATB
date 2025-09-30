@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebATB.Data;
 using WebATB.Data.Entities.Identity;
@@ -7,6 +9,17 @@ using WebATB.Interfaces;
 using WebATB.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Google Auth
+builder.Services.AddAuthentication()
+    .AddCookie()
+    .AddGoogle(opt =>
+    {
+        opt.ClientId = builder.Configuration["GoogleKeys:ClientId"];
+        opt.ClientSecret = builder.Configuration["GoogleKeys:ClientSecret"];
+        opt.SignInScheme = IdentityConstants.ExternalScheme; // explicit
+        opt.SaveTokens = true;
+    });
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -41,6 +54,7 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
@@ -49,8 +63,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
-
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

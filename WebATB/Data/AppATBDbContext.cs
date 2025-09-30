@@ -26,6 +26,13 @@ public class AppATBDbContext : IdentityDbContext<UserEntity, RoleEntity, int, Id
             .HasOne(r => r.Role)
             .WithMany(r => r.UserRoles)
             .HasForeignKey(r => r.RoleId);
+
+        // map UserEntity.Logins -> AspNetUserLogins
+        builder.Entity<UserEntity>()
+            .HasMany(u => u.Logins)
+            .WithOne() // no back navigation on IdentityUserLogin<int>
+            .HasForeignKey(l => l.UserId)
+            .IsRequired();
     }
 
     public DbSet<CategoryEntity> Categories { get; set; }

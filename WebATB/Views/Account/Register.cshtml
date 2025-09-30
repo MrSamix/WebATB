@@ -1,6 +1,6 @@
 ﻿@model WebATB.Models.Account.RegisterViewModel
 
-<h2 class="text-center mt-2">Реєстрація</h2>
+<h2 class="text-center mt-4">Реєстрація</h2>
 <form method="post" asp-controller="Account" asp-action="Register" class="col-md-6 offset-md-3" enctype="multipart/form-data">
 	<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 	<div class="mb-3">
@@ -39,7 +39,7 @@
 		<input type="file" asp-for="Image" accept="image/*">
 		<span asp-validation-for="Image" class="text-danger"></span>
 	</div>
-	<div class="mb-3">
+	<div class="mb-3 d-flex justify-content-between">
 		<button type="submit" class="btn btn-primary">Зареєструватись</button>
 		<a asp-action="Login" class="btn btn-success">Увійти</a>
 	</div>

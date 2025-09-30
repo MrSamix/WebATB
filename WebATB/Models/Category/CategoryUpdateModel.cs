@@ -15,5 +15,6 @@ public class CategoryUpdateModel
 
     [Display(Name = "Оберіть файл для фото")]
     public IFormFile? ImageFile { get; set; }
+    [Display(Name = "Опис")]
     public string? Description { get; set; }
 }
